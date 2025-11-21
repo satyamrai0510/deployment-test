@@ -1,0 +1,28 @@
+pipeline {
+    agent any
+
+    tools {
+        maven "Maven3"     // Jenkins machine installs Maven
+        jdk "JDK17"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps { checkout scm }
+        }
+
+        stage('Build') {
+            steps { sh 'mvn clean package -DskipTests' }
+        }
+
+        stage('Test') {
+            when { branch "develop" }
+            steps { sh 'mvn test' }
+        }
+
+        stage('Deploy') {
+            when { branch "master" }
+            steps { sh 'echo Deploying...' }
+        }
+    }
+}
